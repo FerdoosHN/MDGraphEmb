@@ -65,10 +65,6 @@ def main(data_path, report_dir="report", selected_classifiers=None):
     # Recalculate class weights based on resampled data
     class_weights = get_class_weights(y_train_resampled)
 
-    # Reshape input for CNN and Neural Network
-    x_train_resampled_reshaped = np.expand_dims(x_train_resampled, axis=-1)
-    x_test_reshaped = np.expand_dims(x_test, axis=-1)
-
     # Define all available classifiers
     classifiers = {
         "Logistic Regression": LogisticRegression(class_weight='balanced', max_iter=1000),
@@ -90,19 +86,24 @@ def main(data_path, report_dir="report", selected_classifiers=None):
     df['set_type'] = 'train'
     df.loc[test_indices, 'set_type'] = 'test'
 
-    # Scale data for Neural Network, CNN, and Support Vector
-    scaler = StandardScaler()
-    x_train_scaled = scaler.fit_transform(x_train_resampled)
-    x_test_scaled = scaler.transform(x_test)
-
-    x_train_resampled_scaled_reshaped = np.expand_dims(x_train_scaled, axis=-1)
-    x_test_reshaped_scaled = np.expand_dims(x_test_scaled, axis=-1)
-
     # Train, predict, and evaluate each classifier
     for name, model in classifiers.items():
         print(f"\nRunning {name}...")
         filename = f'model_{name.lower().replace(" ", "_")}.job'
-        
+
+        # Conditionally scale data only for SVM, Neural Network, and CNN
+        if name in ["Neural Network", "CNN", "Support Vector"]:
+            scaler = StandardScaler()
+            x_train_scaled = scaler.fit_transform(x_train_resampled)
+            x_test_scaled = scaler.transform(x_test)
+        else:
+            x_train_scaled = x_train_resampled
+            x_test_scaled = x_test
+
+        # Reshape input for CNN and Neural Network
+        x_train_resampled_reshaped = np.expand_dims(x_train_scaled, axis=-1)
+        x_test_reshaped = np.expand_dims(x_test_scaled, axis=-1)
+
         if name == "Neural Network":
             nn_model = build_nn_model(x_train_scaled.shape[1], len(np.unique(y_encoded)))
             y_train_resampled_cat = to_categorical(y_train_resampled, len(np.unique(y_encoded)))
@@ -113,7 +114,7 @@ def main(data_path, report_dir="report", selected_classifiers=None):
                          callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
             # Save the neural network model
-            nn_model.save(os.path.join(report_dir, 'model_neural_network.h5'))  # Save model
+            nn_model.save(os.path.join(report_dir, 'model_neural_network.h5'))
 
             # Make predictions
             predictions = np.argmax(nn_model.predict(x_test_scaled), axis=-1)
@@ -126,19 +127,19 @@ def main(data_path, report_dir="report", selected_classifiers=None):
             evaluator.evaluate(name, y_test, predictions, y_score)
 
         elif name == "CNN":
-            cnn_model = build_cnn_model(x_train_resampled_scaled_reshaped.shape[1], len(np.unique(y_encoded)))
+            cnn_model = build_cnn_model(x_train_resampled_reshaped.shape[1], len(np.unique(y_encoded)))
             y_train_resampled_cat = to_categorical(y_train_resampled, len(np.unique(y_encoded)))
 
-            cnn_model.fit(x_train_resampled_scaled_reshaped, y_train_resampled_cat,
+            cnn_model.fit(x_train_resampled_reshaped, y_train_resampled_cat,
                           epochs=30, batch_size=32, validation_split=0.2,
                           callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
             # Save the CNN model
-            cnn_model.save(os.path.join(report_dir, 'model_cnn.h5'))  # Save model
+            cnn_model.save(os.path.join(report_dir, 'model_cnn.h5'))
 
             # Make predictions
-            predictions = np.argmax(cnn_model.predict(x_test_reshaped_scaled), axis=-1)
-            y_score = cnn_model.predict(x_test_reshaped_scaled)
+            predictions = np.argmax(cnn_model.predict(x_test_reshaped), axis=-1)
+            y_score = cnn_model.predict(x_test_reshaped)
 
             # Add predictions to the DataFrame
             df.loc[test_indices, f'{name}_pred'] = label_encoder.inverse_transform(predictions)
@@ -161,8 +162,7 @@ def main(data_path, report_dir="report", selected_classifiers=None):
 
         # Save dataset with predictions
         df_with_pred = df[['set_type', 'state', f'{name}_pred']]
-        df_with_pred.to_csv(os.path.join("report", f'data_with_predictions_{name.lower().replace(" ", "_")}.csv'), index=False)
+        df_with_pred.to_csv(os.path.join(report_dir, f'data_with_predictions_{name.lower().replace(" ", "_")}.csv'), index=False)
         print(f"Dataset with {name} predictions saved to 'report/data_with_predictions_{name.lower().replace(' ', '_')}.csv'")
 
     evaluator.save_results()
-

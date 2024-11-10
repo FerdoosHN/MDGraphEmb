@@ -135,6 +135,34 @@ embedded_data/
 ADKData/
 report5000/
 report10000/
+report25000
+report/
+reportnewrep10/
+reportnewrep5000/
+reportnewrep10000/
+reportnewrep25000/
+reportgcn25000/
+reportnode2vec5000/
+reportt/
+savemodels50/
 target_embedded_data/
+NewRepembdata/
+reportgcn10000/
+reportgcn5000/
+reportsage5000/
+reportsage10000/
+reportsage25000/
+reportnode2vec10000/
+reportnode2vec25000/
+reportsage50000
+reportsage100000/
+reportgat25000/
+reportgat10000/
+reportgat5000/
+reportnewrep50000
+testnewrep5000.py
+testnewrep10000.py
+testnewrep25000.py
+testnewrep50000.py
 
 
