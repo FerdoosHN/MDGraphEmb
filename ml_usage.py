@@ -8,7 +8,7 @@ sys.path.append(project_root)
 import ml
 
 # Define paths
-data_path = '/Users/ferdooshosseinnezhad/Projects/MDGraphEMB/target_embedded_data/gat_25000.csv'
+data_path = '/Users/ferdooshosseinnezhad/Projects/MDGraphEMB/target_embedded_data/graphsage5000.csv'
 report_dir = 'report'
 
 # Ensure the report directory exists

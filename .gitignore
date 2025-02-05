@@ -159,10 +159,15 @@ reportsage100000/
 reportgat25000/
 reportgat10000/
 reportgat5000/
+reportSVMScaled/
+reportSVMNonScaled/
 reportnewrep50000
 testnewrep5000.py
 testnewrep10000.py
 testnewrep25000.py
 testnewrep50000.py
+mlscaledSVM.py
+NonScaledSVM.py
+
 
 
