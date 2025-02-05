@@ -101,7 +101,7 @@ pip install -r requirements.txt
 ### **Input**
 - **Trajectory file**: The Molecular Dynamics simulation trajectory (e.g., `.xtc`).
 - **Topology file**: The corresponding topology file (e.g., `.gro`).
-- **Target data file** *(optional)*:  
+- **Target data file**:  
   File specifying target values, such as:
   - `target.dat`
 
