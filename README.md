@@ -126,7 +126,7 @@ The following output files will be generated during the embedding and machine le
 
 #### **4. Classification Report**
 - **File**: `classification_report.csv`  
-  Contains detailed metrics, including precision, recall, F1-score, and support for each class.
+  Contains detailed metrics, including accuracy, precision, recall, F1-score, and support for each class.
 
 #### **5. Confusion Matrix**
 - **File**: `confusion_matrix.png`  
