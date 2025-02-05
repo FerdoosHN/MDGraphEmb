@@ -122,7 +122,7 @@ The following output files will be generated during the embedding and machine le
 
 #### **3. Classification Results**
 - **File**: `accuracy_scores.csv`  
-  Includes accuracy scores for different machine learning models and embedding methods.
+  Includes accuracy scores for different machine learning models.
 
 #### **4. Classification Report**
 - **File**: `classification_report.csv`  
