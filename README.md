@@ -1,5 +1,5 @@
 
-# **MDGraphEmb: MDGraphEmb: A Toolkit for Encoding Molecular Dynamics Ensembles with Graph Embedding**
+# **MDGraphEmb: A Toolkit for Encoding Molecular Dynamics Ensembles with Graph Embedding**
 
 ## **Motivation**  
 Molecular Dynamics (MD) simulations are essential for investigating protein dynamics and function. Although there have been significant advances in the integration of simulation techniques and machine learning, there are still challenges in selecting the best data representation for learning.  
