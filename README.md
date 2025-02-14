@@ -7,15 +7,7 @@ Molecular Dynamics (MD) simulations are essential for investigating protein dyna
 ---
 
 ## **Overview**  
-We introduce MDGraphEmb, a Python library built on MDAnalysis, designed to facilitate the conversion of
-protein conformation data into graph-based representations and graph embeddings. This enables the compression of large
-noisy simulation trajectories into tabular formats suitable for machine learning. MDGraphEmb provides a framework
-that supports a range of graph embedding techniques and machine learning models to create workflows to analyse protein
-dynamics and identify important protein conformations. Graph embedding effectively captures and compresses structural
-information from MD simulation data, making it applicable to diverse downstream machine-learning classification tasks.
-An application is presented for encoding and detecting important protein conformations from molecular dynamics
-simulations to classify functional states. Furthermore, a performance comparison of different graph embedding methods
-in combination with machine learning models is reported.
+We introduce MDGraphEmb, a Python library built on MDAnalysis, designed to facilitate the conversion of protein conformation data into graph-based representations and graph embeddings. This enables the compression of large noisy simulation trajectories into tabular formats suitable for machine learning. MDGraphEmb provides a framework that supports a range of graph embedding techniques and machine learning models, enabling the creation of workflows to analyse protein dynamics and identify important protein conformations. Graph embedding effectively captures and compresses structural information from MD simulation data, making it applicable to diverse downstream machine- learning classification tasks. An application is presented for encoding and detecting important protein conformations from molecular dynamics simulations to classify functional states. Furthermore, a performance comparison of different graph embedding methods in combination with machine learning models is reported.
 
 ---
 
