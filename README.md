@@ -68,6 +68,12 @@ pip install -r requirements.txt
 
 ---
 
+## Data availability
+Relevant data underpinning this publication can be accessed from Brunel University London’s data repository under CC BY licence:
+https://brunel.figshare.com/collections/MDGraphEmb_-_Data/7664645
+
+---
+
 ## **Key Features**  
 
 - **Graph Embedding Methods:**  
