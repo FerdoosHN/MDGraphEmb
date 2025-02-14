@@ -2,12 +2,7 @@
 # **MDGraphEmb: A Toolkit for Encoding Molecular Dynamics Ensembles with Graph Embedding**
 
 ## **Motivation**  
-Molecular Dynamics (MD) simulations are essential for investigating protein dynamics and function.
-Although there have been significant advances in integrating simulation techniques and machine learning, there are
-still challenges in selecting the best data representation for learning. Graph embedding is a powerful computational
-method that automatically learns low-dimensional representations of nodes in a graph while preserving graph topology
-and node properties, thereby bridging graph structures and machine learning methods. Graph embeddings have great
-potential for efficient representation of MD simulation data and studying protein dynamics.
+Molecular Dynamics (MD) simulations are essential for investigating protein dynamics and function. Although significant advances have been made in integrating simulation techniques and machine learning, there are still challenges in selecting the most suitable data representation for learning. Graph embedding is a powerful computational method that automatically learns low-dimensional representations of nodes in a graph while preserving graph topology and node properties, thereby bridging graph structures and machine learning methods. Graph embeddings hold great potential for efficiently representing MD simulation data and studying protein dynamics.
 
 ---
 
