@@ -20,27 +20,47 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-
-
-import sys
 import os
+import sys
 
-# Determine the project root directory
+# Set project root and make internal modules importable
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(project_root)  # Add project root to sys.path for imports
+sys.path.append(project_root)
 
+# Import GraphSAGE embedding runner from the MDGraphEMB pipeline
 import protein_emb
 
-# Instructions for the user
-print("Generate GraphSAGE embeddings by providing the required file paths.\n")
+def generate_graphsage_embeddings(trajectory_file, topology_file, output_file):
+    """
+    Run GraphSAGE embedding generation from protein MD trajectory.
 
-# Define the required paths relative to the project root
-trajectory_file = os.path.join(project_root, 'ADKData', 'R02_4AKE_DM_prod_T300_protein_dt200.xtc')
-topology_file = os.path.join(project_root, 'ADKData', 'R02_4AKE_DM_prod_T300_protein.gro')
-output_file_graph_sage = os.path.join(project_root, 'embedded_data','graphsage_embeddings.csv')
+    Parameters:
+    - trajectory_file: str, path to the input trajectory (.xtc)
+    - topology_file: str, path to the topology (.gro)
+    - output_file: str, destination path for the CSV output
+    """
+    # Ensure the output directory exists
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
-# Run the GraphSAGE embedding generation
-protein_emb.run_graphsage(trajectory_file, topology_file, output_file_graph_sage)
+    # Call the main embedding generation function
+    protein_emb.run_graphsage(trajectory_file, topology_file, output_file)
 
-print("\nGraphSAGE embedding generation completed successfully.")
+    # Confirmation message
+    print(f"✅ Embeddings saved to {output_file}")
+
+# Enable command-line usage
+if __name__ == "__main__":
+    import argparse
+
+    # Setup command-line arguments
+    parser = argparse.ArgumentParser(description="Generate GraphSAGE embeddings.")
+    parser.add_argument("--trajectory", required=True, help="Path to trajectory (.xtc) file")
+    parser.add_argument("--topology", required=True, help="Path to topology (.gro) file")
+    parser.add_argument("--output", required=True, help="Output CSV path for embeddings")
+
+    # Parse arguments
+    args = parser.parse_args()
+
+    # Call the embedding generator
+    generate_graphsage_embeddings(args.trajectory, args.topology, args.output)
 

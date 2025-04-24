@@ -1,42 +1,86 @@
+"""
+@release_date  : $release_date
+@version       : $release_version
+@author        : Ferdoos Hossein Nezhad
+
+This file is part of the MDGraphEMB software 
+(https://github.com/FerdoosHN/MDGraphEMB).
+Copyright (c) 2025 Ferdoos Hossein Nezhad and Alessandro Pandini.
+
+This program is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published by  
+the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful, but 
+WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License 
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""
+
 import os
 import sys
 
-# Set the main project root directory
+# Set project root path and allow importing project modules
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
 
+# Import ML pipeline module
 import ml
 
-# Define paths
-data_path = '/Users/ferdooshosseinnezhad/Projects/MDGraphEMB/target_embedded_data/graphsage5000.csv'
-report_dir = 'report'
+# Define a reusable function to run the ML pipeline
+def run_ml_pipeline(data_path, report_dir="report", classifiers=None):
+    """
+    Execute the ML classification workflow.
 
-# Ensure the report directory exists
-os.makedirs(report_dir, exist_ok=True)
+    Parameters:
+    - data_path: str, path to the CSV file containing graph embeddings + target labels.
+    - report_dir: str, directory where evaluation reports will be saved.
+    - classifiers: list of str, optional list of classifiers to use.
+    """
+    # Ensure report output directory exists
+    os.makedirs(report_dir, exist_ok=True)
 
-# Available classifiers in `ml.py`:
-# classifiers = {
-#     "Logistic Regression": LogisticRegression(class_weight='balanced', max_iter=1000),
-#     "Random Forest": RandomForestClassifier(class_weight='balanced'),
-#     "XGBoost": XGBClassifier(),
-#     "LightGBM": LGBMClassifier(class_weight='balanced'),
-#     "Neural Network": 'neural_network',
-#     "CNN": 'cnn',
-#     "Support Vector": SVC(probability=True, class_weight='balanced')
-# }
+    # Default list of classifiers (can be customized by user)
+    if classifiers is None:
+        classifiers = [
+            "Logistic Regression",
+            "Random Forest",
+            "XGBoost",
+            "LightGBM",
+            "Neural Network",
+            "CNN",
+            "Support Vector"
+        ]
 
-# Choose classifiers to run from the list above
-# These are the classifiers I have chosen:
-selected_classifiers = ["Logistic Regression", "XGBoost", "LightGBM", "Random Forest", "Neural Network", "CNN", "Support Vector"]
+    # Display the selected classifiers
+    print("\n🔍 Running the following classifiers:")
+    for clf in classifiers:
+        print(f"   ✅ {clf}")
 
-# Display selected classifiers
-print("\nRunning the following classifiers:")
-for model_name in selected_classifiers:
-    print(f"- {model_name}")
+    # Run the main ML pipeline with the provided arguments
+    ml.main(data_path=data_path, report_dir=report_dir, selected_classifiers=classifiers)
 
-# Run the main function with only the selected classifiers
-ml.main(data_path, report_dir, selected_classifiers=selected_classifiers)
-print(f"\nModel training and evaluation completed. Reports saved in '{report_dir}'.")
+    # Completion message
+    print("\n✅ Model training and evaluation complete.")
+    print(f"📁 Reports saved in: {report_dir}")
 
+# Allow command-line usage of the script
+if __name__ == "__main__":
+    import argparse
+
+    # Setup CLI argument parser
+    parser = argparse.ArgumentParser(description="Run ML classification on embedded + labeled data.")
+    parser.add_argument("--data", required=True, help="Path to CSV file with embeddings and target labels")
+    parser.add_argument("--report", default="report", help="Directory to save output reports")
+    parser.add_argument("--classifiers", nargs='+', help="List of classifiers to run (optional)")
+
+    # Parse CLI arguments
+    args = parser.parse_args()
+
+    # Call the main ML pipeline
+    run_ml_pipeline(args.data, args.report, args.classifiers)
 
 
