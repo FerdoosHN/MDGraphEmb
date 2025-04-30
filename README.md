@@ -196,6 +196,7 @@ The table below outlines the main steps of the MDGraphEMB pipeline and their cor
 - You can also include other embedding methods such as Node2Vec, GCN, or GAT, or additional classifiers such as `Neural Network`, `CNN`, or `SVM` that are provided in the toolkit.
 - Several `.sh` bash files (e.g., `run_embedding.sh`, `run_target.sh`, `run_ml.sh`) are provided to run and automate the workflow steps efficiently. You can easily modify them.
 - A simple tutorial script (`tutorialexample.py`) is provided to demonstrate the entire pipeline.
+- Note: If users only wish to generate graph embeddings from an MD dataset, the target.dat file is not required. This file is only necessary when performing supervised learning tasks that involve labelled target data.
 
 ---
 
