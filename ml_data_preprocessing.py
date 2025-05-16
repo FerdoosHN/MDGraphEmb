@@ -21,7 +21,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-
 import os
 import pandas as pd
 import numpy as np
@@ -60,7 +59,7 @@ def split_data(x, y):
     Split data into training and testing sets.
     """
     indices = np.arange(x.shape[0])
-    train_indices, test_indices = train_test_split(indices, test_size=0.3, random_state=50)
+    train_indices, test_indices = train_test_split(indices, test_size=0.3, random_state=50, stratify=y)
     x_train, x_test = x.iloc[train_indices], x.iloc[test_indices]
     y_train, y_test = y[train_indices], y[test_indices]
 

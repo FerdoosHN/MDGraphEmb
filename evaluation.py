@@ -32,7 +32,7 @@ class Evaluator:
         self.accuracy_scores = {}
         self.classification_reports = {}
 
-    def evaluate(self, model_name, y_test, y_pred, y_score):
+    def evaluate(self, model_name, y_test, y_pred, y_score, class_labels):
         """
         Evaluate model performance.
         """
@@ -49,14 +49,17 @@ class Evaluator:
         for i, acc in enumerate(class_accuracies):
             report[str(i)]['accuracy'] = acc
 
-        MultiClassClassifier.plot_confusion_matrix(cm, ['A', 'B', 'I', 'N'],
+        # Use actual class label names dynamically
+        MultiClassClassifier.plot_confusion_matrix(cm, class_labels,
                                                    f'Confusion Matrix ({model_name})', accuracy)
 
-        y_test_bin = label_binarize(y_test, classes=[0, 1, 2, 3])
-        MultiClassClassifier.plot_roc_curve(y_test_bin, y_score, ['A', 'B', 'I', 'N'],
+        # Use label_binarize with dynamic class index range
+        y_test_bin = label_binarize(y_test, classes=range(len(class_labels)))
+
+        MultiClassClassifier.plot_roc_curve(y_test_bin, y_score, class_labels,
                                             f'ROC Curve ({model_name})', accuracy)
 
-        MultiClassClassifier.plot_precision_recall_curve(y_test_bin, y_score, ['A', 'B', 'I', 'N'],
+        MultiClassClassifier.plot_precision_recall_curve(y_test_bin, y_score, class_labels,
                                                          f'Precision-Recall Curve ({model_name})', accuracy)
 
     def save_results(self):
@@ -70,6 +73,7 @@ class Evaluator:
         classification_reports_df = pd.concat({k: pd.DataFrame(v).transpose() for k, v in self.classification_reports.items()}, axis=0)
         classification_reports_df.to_csv(os.path.join("report", 'classification_reports.csv'))
         print("Classification reports saved to 'report/classification_reports.csv'")
+
 
 
 

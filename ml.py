@@ -76,20 +76,13 @@ def build_cnn_model(input_shape, num_classes):
     return model
 
 def main(data_path, report_dir="report", selected_classifiers=None):
-    # Load and prepare data
     df, x, y_encoded, label_encoder = load_and_prepare_data(data_path)
-
-    # Split data
     x_train, y_train, x_test, y_test, test_indices = split_data(x, y_encoded)
 
-    # Handle class imbalance with SMOTE
-    smote = SMOTE(random_state=42)
+    smote = SMOTE(random_state=42, k_neighbors=1)
     x_train_resampled, y_train_resampled = smote.fit_resample(x_train, y_train)
-
-    # Recalculate class weights based on resampled data
     class_weights = get_class_weights(y_train_resampled)
 
-    # Define all available classifiers
     classifiers = {
         "Logistic Regression": LogisticRegression(class_weight='balanced', max_iter=1000),
         "Random Forest": RandomForestClassifier(class_weight='balanced'),
@@ -100,23 +93,18 @@ def main(data_path, report_dir="report", selected_classifiers=None):
         "Support Vector": SVC(probability=True, class_weight='balanced')
     }
 
-    # Filter classifiers if selected_classifiers is specified
     if selected_classifiers:
         classifiers = {name: classifiers[name] for name in selected_classifiers if name in classifiers}
 
     evaluator = Evaluator()
-
-    # Update dataframe to mark train and test sets
     df['set_type'] = 'train'
     df.loc[test_indices, 'set_type'] = 'test'
 
-    # Train, predict, and evaluate each classifier
     for name, model in classifiers.items():
         print(f"\nRunning {name}...")
         filename = f'model_{name.lower().replace(" ", "_")}.job'
 
-        # Conditionally scale data only for SVM, Neural Network, and CNN
-        if name in ["Neural Network", "CNN", "Support Vector"]:
+        if name in ["Neural Network", "CNN", "Support Vector", "Logistic Regression"]:
             scaler = StandardScaler()
             x_train_scaled = scaler.fit_transform(x_train_resampled)
             x_test_scaled = scaler.transform(x_test)
@@ -124,7 +112,6 @@ def main(data_path, report_dir="report", selected_classifiers=None):
             x_train_scaled = x_train_resampled
             x_test_scaled = x_test
 
-        # Reshape input for CNN and Neural Network
         x_train_resampled_reshaped = np.expand_dims(x_train_scaled, axis=-1)
         x_test_reshaped = np.expand_dims(x_test_scaled, axis=-1)
 
@@ -137,18 +124,13 @@ def main(data_path, report_dir="report", selected_classifiers=None):
                          class_weight=class_weights,
                          callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
-            # Save the neural network model
             nn_model.save(os.path.join(report_dir, 'model_neural_network.h5'))
 
-            # Make predictions
             predictions = np.argmax(nn_model.predict(x_test_scaled), axis=-1)
             y_score = nn_model.predict(x_test_scaled)
 
-            # Add predictions to the DataFrame
             df.loc[test_indices, f'{name}_pred'] = label_encoder.inverse_transform(predictions)
-
-            # Evaluate the model
-            evaluator.evaluate(name, y_test, predictions, y_score)
+            evaluator.evaluate(name, y_test, predictions, y_score, class_labels=label_encoder.classes_)
 
         elif name == "CNN":
             cnn_model = build_cnn_model(x_train_resampled_reshaped.shape[1], len(np.unique(y_encoded)))
@@ -158,33 +140,26 @@ def main(data_path, report_dir="report", selected_classifiers=None):
                           epochs=30, batch_size=32, validation_split=0.2,
                           callbacks=[EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
-            # Save the CNN model
             cnn_model.save(os.path.join(report_dir, 'model_cnn.h5'))
 
-            # Make predictions
             predictions = np.argmax(cnn_model.predict(x_test_reshaped), axis=-1)
             y_score = cnn_model.predict(x_test_reshaped)
 
-            # Add predictions to the DataFrame
             df.loc[test_indices, f'{name}_pred'] = label_encoder.inverse_transform(predictions)
-
-            # Evaluate the model
-            evaluator.evaluate(name, y_test, predictions, y_score)
+            evaluator.evaluate(name, y_test, predictions, y_score, class_labels=label_encoder.classes_)
 
         else:
             multi_classifier = MultiClassClassifier(model, filename, label_encoder)
             multi_classifier.fit(x_train_scaled, y_train_resampled)
 
-            # Predict for both train and test sets
             df.loc[test_indices, f'{name}_pred'] = multi_classifier.predict_labels(x_test_scaled)
 
-            # Predict and evaluate on test set
             y_pred = multi_classifier.predict(x_test_scaled)
             y_score = multi_classifier.predict_proba(x_test_scaled)
-            evaluator.evaluate(name, y_test, y_pred, y_score)
+
+            evaluator.evaluate(name, y_test, y_pred, y_score, class_labels=label_encoder.classes_)
             multi_classifier.save_model()
 
-        # Save dataset with predictions
         df_with_pred = df[['set_type', 'state', f'{name}_pred']]
         df_with_pred.to_csv(os.path.join(report_dir, f'data_with_predictions_{name.lower().replace(" ", "_")}.csv'), index=False)
         print(f"Dataset with {name} predictions saved to 'report/data_with_predictions_{name.lower().replace(' ', '_')}.csv'")
