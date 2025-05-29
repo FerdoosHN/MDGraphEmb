@@ -20,8 +20,6 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-
-
 import os
 import numpy as np
 import tensorflow as tf
@@ -86,8 +84,8 @@ def main(data_path, report_dir="report", selected_classifiers=None):
     classifiers = {
         "Logistic Regression": LogisticRegression(class_weight='balanced', max_iter=1000),
         "Random Forest": RandomForestClassifier(class_weight='balanced'),
-        "XGBoost": XGBClassifier(),
-        "LightGBM": LGBMClassifier(class_weight='balanced'),
+        "XGBoost": XGBClassifier(max_depth=3, n_estimators=80, tree_method='hist', n_jobs=2, verbosity=1),
+        "LightGBM": LGBMClassifier(class_weight='balanced', max_depth=3, num_leaves=7, n_estimators=80, n_jobs=2, verbosity=1, force_col_wise=True),
         "Neural Network": 'neural_network',
         "CNN": 'cnn',
         "Support Vector": SVC(probability=True, class_weight='balanced')
