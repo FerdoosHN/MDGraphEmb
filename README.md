@@ -199,7 +199,7 @@ The table below outlines the main steps of the MDGraphEMB pipeline and their cor
 - Note: If users only wish to generate graph embeddings from an MD dataset, the target.dat file is not required. This file is only necessary when performing supervised learning tasks that involve labelled target data.
 
 ---
-## **Performance Benchmarks**
+## **Computational Performance Benchmarks (ADK Example)**
 
 The following table summarises the runtime and memory usage for key steps in the MDGraphEmb pipeline across different frame counts for the ADK system. All measurements were obtained on a **MacBook Pro (14", Nov 2023)** with an **Apple M3 Pro chip** and **18 GB RAM**, using the **GraphSAGE embedding method** and selected machine learning models (**Logistic Regression**, **Random Forest**, **LightGBM**, **XGBoost**):
 
