@@ -1,4 +1,4 @@
-# **MDGraphEmb: A Toolkit for Encoding Molecular Dynamics Ensembles with Graph Embedding**
+# **MDGraphEmb: A Toolkit for Graph Embedding and Classification of Protein Conformational Ensembles**
 
 ## **Motivation**  
 Molecular Dynamics (MD) simulations are essential for investigating protein dynamics and function. Although significant advances have been made in integrating simulation techniques and machine learning, there are still challenges in selecting the most suitable data representation for learning. Graph embedding is a powerful computational method that automatically learns low-dimensional representations of nodes in a graph while preserving graph topology and node properties, thereby bridging graph structures and machine learning methods. Graph embeddings hold great potential for efficiently representing MD simulation data and studying protein dynamics.
@@ -6,7 +6,7 @@ Molecular Dynamics (MD) simulations are essential for investigating protein dyna
 ---
 
 ## **Overview**  
-We introduce MDGraphEmb, a Python library built on MDAnalysis, designed to facilitate the conversion of protein conformation data into graph-based representations and graph embeddings. This enables the compression of large noisy simulation trajectories into tabular formats suitable for machine learning. MDGraphEmb provides a framework that supports a range of graph embedding techniques and machine learning models, enabling the creation of workflows to analyse protein dynamics and identify important protein conformations. Graph embedding effectively captures and compresses structural information from MD simulation data, making it applicable to diverse downstream machine-learning classification tasks. An application is presented for encoding and detecting important protein conformations from molecular dynamics simulations to classify functional states. Furthermore, a performance comparison of different graph embedding methods in combination with machine learning models is reported.
+We introduce MDGraphEmb, a Python library built on MDAnalysis, designed to facilitate the conversion of protein conformation data into graph-based representations and graph embeddings. This enables the compression of large noisy simulation trajectories into tabular formats suitable for machine learning. MDGraphEmb provides a framework that supports a range of graph embedding techniques and machine learning models, enabling the creation of workflows to analyse protein dynamics and identify important protein conformations. Graph embedding effectively captures and compresses structural information from protein MD simulation data, making it applicable to diverse downstream machine-learning classification tasks. An application is presented for encoding and detecting important protein conformations from molecular dynamics simulations to classify functional states. Furthermore, a performance comparison of different graph embedding methods in combination with machine learning models is reported.
 
 ---
 
@@ -199,6 +199,27 @@ The table below outlines the main steps of the MDGraphEMB pipeline and their cor
 - Note: If users only wish to generate graph embeddings from an MD dataset, the target.dat file is not required. This file is only necessary when performing supervised learning tasks that involve labelled target data.
 
 ---
+## **Performance Benchmarks**
+
+The following table summarises the runtime and memory usage for key steps in the MDGraphEmb pipeline across different frame counts for the ADK system. All measurements were obtained on a **MacBook Pro (14", Nov 2023)** with an **Apple M3 Pro chip** and **18 GB RAM**, using the **GraphSAGE embedding method** and selected machine learning models (**Logistic Regression**, **Random Forest**, **LightGBM**, **XGBoost**):
+
+| **Step**                         | **Frames** | **Time (s)** *(min)*     | **Memory (MB)** |
+|----------------------------------|------------|---------------------------|-----------------|
+| **GraphSAGE Embedding**          | 5000       | 144.60 *(~2.4 min)*       | 3831.91         |
+|                                  | 10000      | 298.86 *(~5.0 min)*       | 1169.09         |
+|                                  | 25000      | 802.49 *(~13.4 min)*      | 1844.83         |
+|                                  | 50000      | 1650.00 *(~27.5 min)*     | 3200.00         |
+| **Merging Targets**              | 5000       | 34.57 *(~0.6 min)*        | 3937.53         |
+|                                  | 10000      | 66.07 *(~1.1 min)*        | 1682.58         |
+|                                  | 25000      | 177.12 *(~3.0 min)*       | 2262.70         |
+|                                  | 50000      | 360.00 *(~6.0 min)*       | 2500.00         |
+| **ML Training + Evaluation**     | 5000       | 379.81 *(~6.3 min)*       | 3107.89         |
+| *(LR, RF, LGBM, XGB)*            | 10000      | 788.12 *(~13.1 min)*      | 2021.38         |
+|                                  | 25000      | 2660.46 *(~44.3 min)*     | 1739.50         |
+|                                  | 50000      | 5400.00 *(~90.0 min)*     | 1600.00         |
+
+> **Note:**  Memory usage may vary depending on system activity and background processes. Users with a standard modern laptop (8–16 GB RAM) should experience smooth performance up to **25,000 frames**. 
+
 
 ## **Authors**  
 
